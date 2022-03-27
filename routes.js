@@ -19,29 +19,32 @@ router.get('/user/register', (req,res) =>{
     res.status(200).send();
 });
 
-
-router.post('/user/login', (req,res) =>{
-    const username = req.body.username;
-    const password = req.body.password;
-    const success = false;
+async function findUsers(username, password){
     try {
-        User.findOne({
+        await User.findOne({
             where:{
                 username: username,
                 password: password
             }
         }).then(user => {
             if (!user){
-                success= false;
+                return false;
             }
             else{
-                success = true;
+                return true;
             }
         })
     }catch(e){
         console.log(e.message);
     }
-    if (success){
+}
+router.post('/user/login', (req,res) =>{
+    const username = req.body.username;
+    const password = req.body.password;
+    const success = false;
+
+
+    if (findUsers(username, password)){
         console.log(user)
         return res.status(200).json({msg: "Login successfull!"});
     }
