@@ -20,9 +20,9 @@ router.get('/user/register', (req,res) =>{
 });
 
 
-router.get('/user/login', (req,res) =>{
-    const username = req.query.username;
-    const password = req.query.password;
+router.post('/user/login', (req,res) =>{
+    const username = req.body.username;
+    const password = req.body.password;
     User.findOne({
         where:{
             username: username,
