@@ -19,6 +19,30 @@ router.get('/user/register', (req,res) =>{
     res.status(200).send();
 });
 
+
+router.get('/user/login', (req,res) =>{
+    const username = req.query.username;
+    const password = req.query.password;
+    User.findOne({
+        where:{
+            username: username,
+            password: password
+        }
+    }).then(user => {
+        if (!user){
+            console.log("no user login with this info");
+            res.status(401).send();
+            return null;
+        }
+        else{
+            console.log(user)
+            res.status(200).send();
+        }
+    })
+    res.status(200).send();
+});
+
+
 router.post('/user/create', (req,res) =>{
     const bob = User.create({
         first_name: req.body.first_name,
