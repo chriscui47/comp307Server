@@ -38,7 +38,7 @@ router.post('/user/login', (req,res) =>{
             }
             else{
                 console.log(user)
-                res.status(200).send("Login successfull!");
+                return res.status(200).send("Login successfull!");
             }
         })
     }catch(e){
