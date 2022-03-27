@@ -23,29 +23,33 @@ router.get('/user/register', (req,res) =>{
 router.post('/user/login', (req,res) =>{
     const username = req.body.username;
     const password = req.body.password;
+    const success = false;
     try {
-        User.findOne({
+        await User.findOne({
             where:{
                 username: username,
                 password: password
             }
         }).then(user => {
             if (!user){
-                console.log("no user login with this info");
-                res.status(404).json({ msg: "no login info" });
-                // stop further execution in this callback
-                return;
+                success= false;
             }
             else{
-                console.log(user)
-                return res.status(200).send("Login successfull!");
+                success = true;
             }
         })
     }catch(e){
         console.log(e.message);
     }
-
-    res.status(200).send();
+    if (success){
+        console.log(user)
+        return res.status(200).json({msg: "Login successfull!"});
+    }
+    else{
+        console.log("no user login with this info");
+        return res.status(404).json({ msg: "Incorrect login info " });
+        // stop further execution in this callback
+    }
 });
 
 

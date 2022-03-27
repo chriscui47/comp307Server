@@ -21,7 +21,7 @@ app.use('/api', api);
   
 
 /** Rules of our API */
-app.use((req, res, next) => {
+app.use((req, res, next) => {/*
     res.setHeader('Access-Control-Allow-Origin', '*');
 
     res.header('Access-Control-Allow-Origin', '*');
@@ -34,7 +34,7 @@ app.use((req, res, next) => {
         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
         return res.status(200).json({});
     }
-
+*/
     return next();
 });
 process.on('uncaughtException', function (error) {
