@@ -37,7 +37,9 @@ app.use((req, res, next) => {
 
     return next();
 });
-
+process.on('uncaughtException', function (error) {
+  console.log(error.stack);
+});
 
 const User = require("./models/user");
 const Course = require("./models/course");
