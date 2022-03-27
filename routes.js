@@ -27,10 +27,13 @@ async function findUsers(username, password){
                 password: password
             }
         }).then(user => {
+            console.log(user);
             if (!user){
+                console.log("false");
                 return false;
             }
             else{
+                console.log("true");
                 return true;
             }
         })
@@ -44,12 +47,10 @@ router.post('/user/login', (req,res) =>{
     const success = false;
 
 
-    if (findUsers(username, password)){
-        console.log("login success")
+    if (await findUsers(username, password)){
         return res.status(200).json({msg: "Login successfull!"});
     }
     else{
-        console.log("no user login with this info");
         return res.status(404).json({ msg: "Incorrect login info " });
         // stop further execution in this callback
     }
