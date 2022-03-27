@@ -45,7 +45,7 @@ router.post('/user/login', (req,res) =>{
 
 
     if (findUsers(username, password)){
-        console.log(user)
+        console.log("login success")
         return res.status(200).json({msg: "Login successfull!"});
     }
     else{
