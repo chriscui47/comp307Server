@@ -3,6 +3,7 @@ const { Sequelize, Model, DataTypes } = require('@sequelize/core');
 const sequelize = require("./dbconfig.js");
 const bodyParser = require('body-parser');
 var api = require('./routes.js');
+const cors = require('cors');
 
 
 var app = express();
@@ -10,6 +11,8 @@ var app = express();
 /** Parse the body of the request */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+app.use(cors());
+app.options('*', cors());
 
 app.get('/', function (req, res) {
   res.send('Hello World!');
