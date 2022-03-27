@@ -32,8 +32,9 @@ router.post('/user/login', (req,res) =>{
         }).then(user => {
             if (!user){
                 console.log("no user login with this info");
-                res.status(401).send();
-                return null;
+                res.status(404).json({ msg: "no login info" });
+                // stop further execution in this callback
+                return;
             }
             else{
                 console.log(user)
