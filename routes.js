@@ -25,7 +25,7 @@ router.post('/user/login', (req,res) =>{
     const password = req.body.password;
     const success = false;
     try {
-        await User.findOne({
+        User.findOne({
             where:{
                 username: username,
                 password: password
