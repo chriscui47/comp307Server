@@ -19,13 +19,11 @@ router.get('/user/register', (req,res) =>{
     res.status(200).send();
 });
 
-async function findUsers(username, password){
-    
-}
+
 router.post('/user/login', async (req,res) =>{
     const username = req.body.username;
     const password = req.body.password;
-    let status = findUsers(username, password)
+    let status = false;
     try {
         await User.findOne({
             where:{
@@ -46,8 +44,6 @@ router.post('/user/login', async (req,res) =>{
     }catch(e){
         console.log(e.message);
     }
-
-
     if (status == true){
         return res.status(200).json({msg: "Login successfull!"});
     }
@@ -59,8 +55,10 @@ router.post('/user/login', async (req,res) =>{
 });
 
 
-router.post('/user/create', (req,res) =>{
-    const bob = User.create({
+router.post('/user/create', async (req,res) =>{
+    let status = false;
+    try {
+    const bob = awaitUser.create({
         first_name: req.body.first_name,
         last_name:  req.body.last_name ,
         email:  req.body.email,
@@ -68,10 +66,30 @@ router.post('/user/create', (req,res) =>{
         username:  req.body.username,  
         password:  req.body.password,
         role_name:  req.body.role_name}
-        );
+        ).then(user => {
+            console.log(user);
+            if (!user){
+                console.log("false");
+                status= false;
+            }
+            else{
+                console.log("true");
+                status= true;
+            }
+        })
     console.log(JSON.stringify(bob));
-    res.status(200).send();
+    }catch(e){
+        console.log(e.message);
+    }
 
+    if (status == true){
+        return res.status(200).json({msg: "Registration successfull!"});
+    }
+    else{
+        console.log("incorrect Registration info")
+        return res.status(404).json({ msg: "Incorrect Registration info " });
+        // stop further execution in this callback
+    }
 });
 
 router.post('/course/create', (req,res) =>{
