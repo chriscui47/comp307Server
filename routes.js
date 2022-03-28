@@ -50,6 +50,7 @@ router.post('/user/login', (req,res) =>{
         return res.status(200).json({msg: "Login successfull!"});
     }
     else{
+        console.log("incorrect login info")
         return res.status(404).json({ msg: "Incorrect login info " });
         // stop further execution in this callback
     }
