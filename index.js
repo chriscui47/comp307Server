@@ -11,7 +11,14 @@ var app = express();
 /** Parse the body of the request */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-app.use(cors());
+
+const corsOptions ={
+  origin:'*', 
+  credentials:true,            //access-control-allow-credentials:true
+  optionSuccessStatus:200,
+}
+
+app.use(cors(corsOptions));
 app.options('*', cors());
 
 app.get('/', function (req, res) {
