@@ -44,8 +44,8 @@ async function findUsers(username, password){
 router.post('/user/login', (req,res) =>{
     const username = req.body.username;
     const password = req.body.password;
-    const status = await findUsers(username, password)
-    
+    const status = findUsers(username, password)
+
     if (status){
         return res.status(200).json({msg: "Login successfull!"});
     }
