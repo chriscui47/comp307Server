@@ -20,6 +20,12 @@ router.get('/user/register', (req,res) =>{
 });
 
 async function findUsers(username, password){
+    
+}
+router.post('/user/login', async (req,res) =>{
+    const username = req.body.username;
+    const password = req.body.password;
+    const status = findUsers(username, password)
     try {
         await User.findOne({
             where:{
@@ -30,21 +36,17 @@ async function findUsers(username, password){
             console.log(user);
             if (!user){
                 console.log("false");
-                return false;
+                status= false;
             }
             else{
                 console.log("true");
-                return true;
+                status= true;
             }
         })
     }catch(e){
         console.log(e.message);
     }
-}
-router.post('/user/login', (req,res) =>{
-    const username = req.body.username;
-    const password = req.body.password;
-    const status = findUsers(username, password)
+
 
     if (status == true){
         return res.status(200).json({msg: "Login successfull!"});
