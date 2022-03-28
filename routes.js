@@ -25,7 +25,7 @@ async function findUsers(username, password){
 router.post('/user/login', async (req,res) =>{
     const username = req.body.username;
     const password = req.body.password;
-    const status = findUsers(username, password)
+    let status = findUsers(username, password)
     try {
         await User.findOne({
             where:{
