@@ -92,7 +92,7 @@ router.post('/user/create', async (req,res) =>{
     }
 });
 
-router.post('/course/create', (req,res) =>{
+router.post('/course/create', async (req,res) =>{
       let status = false;
       try {
       const bob = await Course.create({
