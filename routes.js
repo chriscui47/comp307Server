@@ -7,7 +7,12 @@ const {addCourse} = require('./courseService.js');
 
 
 router.get('/courses', (req,res) =>{
-    return User.findAll().then ( regs => console.log(regs));
+    return Course.findAll().then( courses => 
+        {
+            console.log(courses);
+            res.status(200).json(courses);
+        }
+    );
 
 });
 
