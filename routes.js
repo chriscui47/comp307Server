@@ -93,18 +93,40 @@ router.post('/user/create', async (req,res) =>{
 });
 
 router.post('/course/create', (req,res) =>{
-      const bob = Course.create({
-      term_month_year: req.body.term_month_year
-      ,
-      course_num:req.body.course_num
-      ,
-      course_name: req.body.course_name
-      ,
-      instructor_assigned_name: req.body.instructor_assigned_name
-      });
-      console.log(JSON.stringify(bob));
-      res.status(200).send();
-
+      let status = false;
+      try {
+      const bob = await Course.create({
+        term_month_year: req.body.term_month_year
+        ,
+        course_num:req.body.course_num
+        ,
+        course_name: req.body.course_name
+        ,
+        instructor_assigned_name: req.body.instructor_assigned_name
+        }
+          ).then(course => {
+              console.log(course);
+              if (!course){
+                  console.log("false");
+                  status= false;
+              }
+              else{
+                  console.log("true");
+                  status= true;
+              }
+          })
+      }catch(e){
+          console.log(e.message);
+      }
+  
+      if (status == true){
+          return res.status(200).json({msg: "Course created successfull!"});
+      }
+      else{
+          console.log("incorrect info")
+          return res.status(404).json({ msg: "Incorrect Course info " });
+          // stop further execution in this callback
+      }
 });
 
 module.exports = router
