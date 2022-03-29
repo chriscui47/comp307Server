@@ -58,7 +58,7 @@ router.post('/user/login', async (req,res) =>{
 router.post('/user/create', async (req,res) =>{
     let status = false;
     try {
-    const bob = awaitUser.create({
+    const bob = await User.create({
         first_name: req.body.first_name,
         last_name:  req.body.last_name ,
         email:  req.body.email,
@@ -86,7 +86,7 @@ router.post('/user/create', async (req,res) =>{
         return res.status(200).json({msg: "Registration successfull!"});
     }
     else{
-        console.log("incorrect Registration info")
+        console.log("incorrect info")
         return res.status(404).json({ msg: "Incorrect Registration info " });
         // stop further execution in this callback
     }
