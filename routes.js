@@ -22,9 +22,8 @@ router.get('/courses/user/', async (req,res) =>{
     let status = false;
     console.log("herew");
     try {
-        await Course.findAll({
-            include: 'users',
-            through: { where: { student_id: `${student_id}` } }
+        await User.findAll({
+            include: 'courses'
         }).then(courses => {
             console.log(courses);
             if (courses === []){
