@@ -5,7 +5,7 @@ const User = require("./models/user");
 const Course = require("./models/course");
 const {addCourse} = require('./courseService.js');
 
-
+//get all courses
 router.get('/courses', (req,res) =>{
     return Course.findAll().then( courses => 
         {
@@ -15,7 +15,42 @@ router.get('/courses', (req,res) =>{
     );
 
 });
+//get list of courses for user
+router.get('/courses/user/', async (req,res) =>{
+    const student_id = req.params.student_id;
+    let coursesRet = [];
+    let status = false;
+    console.log("herew");
+    try {
+        await Course.findAll({
+            include: 'users',
+            through: { where: { student_id: `${student_id}` } }
+        }).then(courses => {
+            console.log(courses);
+            if (courses === []){
+                console.log("false");
+                status= false;
+            }
+            else{
+                console.log("true");
+                status= true;
+                coursesRet = courses
+            }
+        })
+    }catch(e){
+        console.log(e.message);
+    }
+    if (status == true){
+        return res.status(200).json(coursesRet);
+    }
+    else{
+        console.log("incorrect login info")
+        return res.status(404).json({ msg: "Incorrect login info " });
+        // stop further execution in this callback
+    }
+});
 
+//add user to specific course
 router.get('/user/register', (req,res) =>{
     const course_id = req.query.course_id;
     const user_id = req.query.user_id;
@@ -28,6 +63,7 @@ router.get('/user/register', (req,res) =>{
 router.post('/user/login', async (req,res) =>{
     const username = req.body.username;
     const password = req.body.password;
+    let role = "";
     let status = false;
     try {
         await User.findOne({
@@ -44,13 +80,15 @@ router.post('/user/login', async (req,res) =>{
             else{
                 console.log("true");
                 status= true;
+                role = user.role_name;
+
             }
         })
     }catch(e){
         console.log(e.message);
     }
     if (status == true){
-        return res.status(200).json({msg: "Login successfull!"});
+        return res.status(200).json({msg: "Login successfull!", role: role});
     }
     else{
         console.log("incorrect login info")
