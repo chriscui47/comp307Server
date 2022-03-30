@@ -17,13 +17,17 @@ router.get('/courses', (req,res) =>{
 });
 //get list of courses for user
 router.get('/courses/user/', async (req,res) =>{
-    const student_id = req.params.student_id;
+    const student_id = req.query.student_id;
+    console.log(student_id);
     let coursesRet = [];
     let status = false;
     console.log("herew");
     try {
         await User.findAll({
-            include: 'courses'
+            include: 'courses',
+            where: {
+                student_id: student_id
+            }
         }).then(courses => {
             console.log(courses);
             if (courses === []){
@@ -33,7 +37,7 @@ router.get('/courses/user/', async (req,res) =>{
             else{
                 console.log("true");
                 status= true;
-                coursesRet = courses
+                coursesRet = courses[0]["courses"];
             }
         })
     }catch(e){
@@ -49,6 +53,10 @@ router.get('/courses/user/', async (req,res) =>{
     }
 });
 
+
+//get list
+
+
 //add user to specific course
 router.get('/user/register', (req,res) =>{
     const course_id = req.query.course_id;
@@ -58,7 +66,7 @@ router.get('/user/register', (req,res) =>{
     res.status(200).send();
 });
 
-
+//attempt to login
 router.post('/user/login', async (req,res) =>{
     const username = req.body.username;
     const password = req.body.password;
@@ -96,7 +104,7 @@ router.post('/user/login', async (req,res) =>{
     }
 });
 
-
+//create user
 router.post('/user/create', async (req,res) =>{
     let status = false;
     try {
@@ -134,6 +142,7 @@ router.post('/user/create', async (req,res) =>{
     }
 });
 
+//create a course
 router.post('/course/create', async (req,res) =>{
       let status = false;
       try {
