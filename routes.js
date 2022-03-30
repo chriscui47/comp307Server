@@ -15,6 +15,45 @@ router.get('/courses', (req,res) =>{
     );
 
 });
+
+function isRole(role, offset){
+    let roleString = role.split(' ').join('') 
+    // Student, TA, Prof, Administrator, SysOp
+    if (roleString[offset] == '1'){
+        return true;
+    }
+    else{
+        return false;
+    }
+}
+
+//get all users
+router.get('/user', (req,res) =>{
+    
+    return User.findAll(
+    ).then( users => 
+        {
+            res.status(200).json(users);
+        }
+    );
+
+});
+
+//get all users
+router.get('/user/ta', (req,res) =>{
+    
+    return User.findAll(
+    ).then( users => 
+        {
+
+            let tas = users.filter(user => isRole(user.role_name,1))
+            res.status(200).json(tas);
+        }
+    );
+
+});
+
+
 //get list of courses for user
 router.get('/courses/user/', async (req,res) =>{
     const student_id = req.query.student_id;
