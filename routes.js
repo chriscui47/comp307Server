@@ -72,6 +72,7 @@ router.post('/user/login', async (req,res) =>{
     const password = req.body.password;
     let role = "";
     let status = false;
+    let student_id = 0;
     try {
         await User.findOne({
             where:{
@@ -88,14 +89,14 @@ router.post('/user/login', async (req,res) =>{
                 console.log("true");
                 status= true;
                 role = user.role_name;
-
+                student_id = user.student_id;
             }
         })
     }catch(e){
         console.log(e.message);
     }
     if (status == true){
-        return res.status(200).json({msg: "Login successfull!", role: role});
+        return res.status(200).json({student_id: student_id, role: role});
     }
     else{
         console.log("incorrect login info")
