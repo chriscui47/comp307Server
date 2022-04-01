@@ -4,6 +4,21 @@ const sequelize = require("./dbconfig.js");
 const User = require("./models/user");
 const Course = require("./models/course");
 const {addCourse} = require('./courseService.js');
+// Student, TA, Prof, Administrator, SysOp
+
+
+function isRole(role, offset){    
+    let roleString = role.split(' ').join('') 
+    // Student, TA, Prof, Administrator, SysOp
+    if (roleString[offset] == '1'){
+        console.log("is tru")
+        return true;
+    }
+    else{
+        console.log("is false")
+        return false;
+    }
+}
 
 //get list of courses
 router.get('/courses', async (req,res) =>{
@@ -16,13 +31,17 @@ router.get('/courses', async (req,res) =>{
         }).then(courses => {
             console.log(courses);
             if (courses === []){
-                console.log("false");
                 status= false;
             }
             else{
-                console.log("true");
                 status= true;
                 coursesRet = courses;
+                /*
+                coursesRet.forEach((element, index) => {
+                    console.log(index);
+                    const result = element.users.filter( user => isRole(user.role_name, 1));
+                    coursesRet[index].users = ["dsfffffff"];
+                }); */
             }
         })
     }catch(e){
@@ -38,20 +57,8 @@ router.get('/courses', async (req,res) =>{
     }
 });
 
-function isRole(role, offset){
-    let roleString = role.split(' ').join('') 
-    // Student, TA, Prof, Administrator, SysOp
-    if (roleString[offset] == '1'){
-        return true;
-    }
-    else{
-        return false;
-    }
-}
-
 //get all users
 router.get('/user', (req,res) =>{
-    
     return User.findAll(
     ).then( users => 
         {
@@ -61,18 +68,38 @@ router.get('/user', (req,res) =>{
 
 });
 
-//get all users
-router.get('/user/ta', (req,res) =>{
-    
+//get all users by role
+router.get('/user/role', (req,res) =>{
+    const role = req.query.role;
+   // Student, TA, Prof, Administrator, SysOp
+    let offset =0;
+    switch (role.toLowerCase()){
+        case 'student':
+            offset =0;
+            break;
+        case 'ta':
+            offset =1;
+            break;
+        case 'prof':
+            offset =2;
+            break;
+        case 'administrator':
+            offset =3;
+            break;
+        case 'sysop':
+            offset =4;
+            break;
+        default:
+            return res.status(404).json({msg: "invalid role was sent"});
+    }
+    console.log(offset);
     return User.findAll(
     ).then( users => 
         {
-
-            let tas = users.filter(user => isRole(user.role_name,1))
+            let tas = users.filter(user => isRole(user.role_name,offset))
             res.status(200).json(tas);
         }
     );
-
 });
 
 
