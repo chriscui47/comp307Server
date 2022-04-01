@@ -23,22 +23,20 @@ function addCourse(courseId, userId) {
       });
   };
 
-
-
-  function addProfessor(courseId, profId) {
+  function removeCourseFromUser(courseId, userId) {
     return Course.findByPk(courseId)
       .then((course) => {
         if (!course) {
           console.log("course not found!");
           return null;
         }
-        return User.findByPk(profId).then((user) => {
+        return User.findByPk(userId).then((user) => {
           if (!user) {
             console.log("user not found!");
             return null;
           }
-          course.addUser(user);
-          console.log(`>> added user id=${profId.id} to course id=${course.id}`);
+          course.removeUser(user);
+          console.log(`>> added user id=${user.id} to course id=${course.id}`);
           return User;
         });
       })
@@ -49,4 +47,7 @@ function addCourse(courseId, userId) {
 
 
 
-module.exports = {addCourse, addProfessor};
+
+
+
+module.exports = {addCourse, removeCourseFromUser};

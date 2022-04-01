@@ -3,7 +3,7 @@ var router = express.Router();
 const sequelize = require("./dbconfig.js");
 const User = require("./models/user");
 const Course = require("./models/course");
-const {addCourse, addProfessor} = require('./courseService.js');
+const {addCourse, removeCourseFromUser} = require('./courseService.js');
 // Student, TA, Prof, Administrator, SysOp
 
 
@@ -152,6 +152,16 @@ router.post('/user/register', (req,res) =>{
     addCourse(course_id, user_id);
     res.status(200).send();
 });
+
+//add user to specific course
+router.post('/user/unregister', (req,res) =>{
+    const course_id = req.body.course_id;
+    const user_id = req.body.user_id;
+    console.log(user_id);
+    removeCourseFromUser(course_id, user_id);
+    res.status(200).send();
+});
+
 
 //attempt to login
 router.post('/user/login', async (req,res) =>{
