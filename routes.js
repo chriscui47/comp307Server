@@ -5,15 +5,37 @@ const User = require("./models/user");
 const Course = require("./models/course");
 const {addCourse} = require('./courseService.js');
 
-//get all courses
-router.get('/courses', (req,res) =>{
-    return Course.findAll().then( courses => 
-        {
+//get list of courses
+router.get('/courses', async (req,res) =>{
+    let coursesRet = [];
+    let status = false;
+    console.log("herew");
+    try {
+        await Course.findAll({
+            include: 'users'
+        }).then(courses => {
             console.log(courses);
-            res.status(200).json(courses);
-        }
-    );
-
+            if (courses === []){
+                console.log("false");
+                status= false;
+            }
+            else{
+                console.log("true");
+                status= true;
+                coursesRet = courses;
+            }
+        })
+    }catch(e){
+        console.log(e.message);
+    }
+    if (status == true){
+        return res.status(200).json(coursesRet);
+    }
+    else{
+        console.log("incorrect login info")
+        return res.status(404).json({ msg: "Incorrect login info " });
+        // stop further execution in this callback
+    }
 });
 
 function isRole(role, offset){
@@ -97,10 +119,10 @@ router.get('/courses/user/', async (req,res) =>{
 
 
 //add user to specific course
-router.get('/user/register', (req,res) =>{
-    const course_id = req.query.course_id;
-    const user_id = req.query.user_id;
-    console.log(course_id);
+router.post('/user/register', (req,res) =>{
+    const course_id = req.body.course_id;
+    const user_id = req.body.user_id;
+    console.log(user_id);
     addCourse(course_id, user_id);
     res.status(200).send();
 });
@@ -219,5 +241,19 @@ router.post('/course/create', async (req,res) =>{
           // stop further execution in this callback
       }
 });
+
+//delete a user
+router.delete('/user/delete', async (req, res, next) => {
+    let user = await User.findOne({where: {student_id: req.query.student_id}}).catch(e => {
+       console.log(e.message)
+    })
+    if (!user){
+        return res.status(404).json("User not found");
+    }
+    user.destroy();
+    return res.status(200).json("User deleted successfully");
+  });
+
+
 
 module.exports = router
