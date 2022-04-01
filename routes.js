@@ -3,7 +3,7 @@ var router = express.Router();
 const sequelize = require("./dbconfig.js");
 const User = require("./models/user");
 const Course = require("./models/course");
-const {addCourse} = require('./courseService.js');
+const {addCourse, addProfessor} = require('./courseService.js');
 // Student, TA, Prof, Administrator, SysOp
 
 
@@ -27,7 +27,7 @@ router.get('/courses', async (req,res) =>{
     console.log("herew");
     try {
         await Course.findAll({
-            include: 'users'
+            include: ['users', 'professor']
         }).then(courses => {
             console.log(courses);
             if (courses === []){
@@ -51,8 +51,7 @@ router.get('/courses', async (req,res) =>{
         return res.status(200).json(coursesRet);
     }
     else{
-        console.log("incorrect login info")
-        return res.status(404).json({ msg: "Incorrect login info " });
+        return res.status(404).json({ msg: "couldnt get " });
         // stop further execution in this callback
     }
 });
@@ -204,7 +203,8 @@ router.post('/user/create', async (req,res) =>{
         student_id:  req.body.student_id,
         username:  req.body.username,  
         password:  req.body.password,
-        role_name:  req.body.role_name}
+        role_name:  req.body.role_name
+    }
         ).then(user => {
             console.log(user);
             if (!user){
@@ -234,6 +234,9 @@ router.post('/user/create', async (req,res) =>{
 //create a course
 router.post('/course/create', async (req,res) =>{
       let status = false;
+      let fk_professor = req.body.fk_professor;
+      console.log(req.body.fk_professor);
+      var courseTemp;
       try {
       const bob = await Course.create({
         term_month_year: req.body.term_month_year
@@ -241,8 +244,6 @@ router.post('/course/create', async (req,res) =>{
         course_num:req.body.course_num
         ,
         course_name: req.body.course_name
-        ,
-        instructor_assigned_name: req.body.instructor_assigned_name
         }
           ).then(course => {
               console.log(course);
@@ -252,8 +253,13 @@ router.post('/course/create', async (req,res) =>{
               }
               else{
                   console.log("true");
-                  status= true;
+                  courseTemp = course;
+                  return User.findByPk(fk_professor)
               }
+          })
+          .then(prof => {
+            courseTemp.setProfessor(prof);
+            status = true;
           })
       }catch(e){
           console.log(e.message);

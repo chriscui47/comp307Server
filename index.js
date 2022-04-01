@@ -63,6 +63,8 @@ Course.belongsToMany(User, {
   });
 
 
+Course.belongsTo(User, {foreignKey: 'fk_professor', as: "professor"});
+
 sequelize.sync().then( result => {
 }).catch(error => {
     console.log(error);

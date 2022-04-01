@@ -20,11 +20,7 @@ const Course = sequelize.define("course", {
   course_name:{
     type: Sequelize.STRING,
     allowNull: true,
-  },
-  instructor_assigned_name:{
-    type: Sequelize.STRING,
-    allowNull: true,
-  },
+  }
 });
 
 module.exports =  Course;
