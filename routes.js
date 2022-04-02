@@ -102,6 +102,44 @@ router.get('/user/role', (req,res) =>{
 });
 
 
+//get list of users for specific course
+router.get('/user/courses/', async (req,res) =>{
+    const id = req.query.id;
+    let coursesRet = [];
+    let status = false;
+    console.log("herew");
+    try {
+        await Course.findAll({
+            include: 'users',
+            where: {
+                id: id
+            }
+        }).then(users => {
+            console.log(users);
+            if (users === []){
+                console.log("false");
+                status= false;
+            }
+            else{
+                console.log("true");
+                status= true;
+                coursesRet = users[0]["users"];
+            }
+        })
+    }catch(e){
+        console.log(e.message);
+    }
+    if (status == true){
+        return res.status(200).json(coursesRet);
+    }
+    else{
+        console.log("incorrect info")
+        return res.status(404).json({ msg: "Incorrect info " });
+        // stop further execution in this callback
+    }
+});
+
+
 //get list of courses for user
 router.get('/courses/user/', async (req,res) =>{
     const student_id = req.query.student_id;
