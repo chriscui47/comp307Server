@@ -50,6 +50,7 @@ process.on('uncaughtException', function (error) {
 
 const User = require("./models/user");
 const Course = require("./models/course");
+const Comment = require("./models/comment");
 Course.belongsToMany(User, {
     through: "user_course",
     as: "users",
@@ -64,6 +65,19 @@ Course.belongsToMany(User, {
 
 
 Course.belongsTo(User, {foreignKey: 'fk_professor', as: "professor"});
+
+
+User.hasMany(Comment, { as: "comments" });
+Course.hasMany(Comment, { as: "comments" });
+Comment.belongsTo(Course, {
+  foreignKey: "course_id",
+  as: "course",
+});
+Comment.belongsTo(User, {
+  foreignKey: "user_id",
+  as: "user",
+});
+
 
 sequelize.sync().then( result => {
 }).catch(error => {

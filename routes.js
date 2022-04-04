@@ -3,6 +3,7 @@ var router = express.Router();
 const sequelize = require("./dbconfig.js");
 const User = require("./models/user");
 const Course = require("./models/course");
+const Comment = require("./models/comment");
 const {addCourse, removeCourseFromUser} = require('./courseService.js');
 // Student, TA, Prof, Administrator, SysOp
 
@@ -139,6 +140,41 @@ router.get('/user/courses/', async (req,res) =>{
     }
 });
 
+
+//get list of comments for specific TA in a course
+router.get('/course/user/comment', async (req,res) =>{
+    let commentsRet = [];
+    let status = false;
+    console.log("herew");
+    try {
+        await Comment.findAll({
+            where: {
+                course_id: req.query.course_id,
+                user_id: req.query.user_id,
+            }
+        }).then(comments => {
+            if (comments === []){
+                console.log("false");
+                status= false;
+            }
+            else{
+                console.log("true");
+                status= true;
+                commentsRet = comments;
+            }
+        })
+    }catch(e){
+        console.log(e.message);
+    }
+    if (status == true){
+        return res.status(200).json(commentsRet);
+    }
+    else{
+        console.log("incorrect info")
+        return res.status(404).json({ msg: "Incorrect info " });
+        // stop further execution in this callback
+    }
+});
 
 //get list of courses for user
 router.get('/courses/user/', async (req,res) =>{
@@ -323,6 +359,39 @@ router.post('/course/create', async (req,res) =>{
       }
 });
 
+//create a comment
+router.post('/comment/create', async (req,res) =>{
+    let status = false;
+    var commentTemp;
+    try {
+    const bob = await Comment.create({
+      comment: req.body.comment,
+      user_id: req.body.user_id,
+      course_id: req.body.course_id
+      }
+        ).then(comment => {
+            console.log(comment);
+            if (!comment){
+                console.log("false");
+                status= false;
+            }
+            else{
+                status= true;
+            }
+        })
+    }catch(e){
+        console.log(e.message);
+    }
+
+    if (status == true){
+        return res.status(200).json({msg: "Course created successfull!"});
+    }
+    else{
+        console.log("incorrect info")
+        return res.status(404).json({ msg: "Incorrect Course info " });
+        // stop further execution in this callback
+    }
+});
 //delete a user
 router.delete('/user/delete', async (req, res, next) => {
     let user = await User.findOne({where: {student_id: req.query.student_id}}).catch(e => {
