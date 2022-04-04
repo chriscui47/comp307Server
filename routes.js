@@ -21,7 +21,7 @@ function isRole(role, offset){
     }
 }
 
-//get list of courses
+//get list of courses by user
 router.get('/courses', async (req,res) =>{
     let coursesRet = [];
     let status = false;
@@ -43,6 +43,38 @@ router.get('/courses', async (req,res) =>{
                     const result = element.users.filter( user => isRole(user.role_name, 1));
                     coursesRet[index].users = ["dsfffffff"];
                 }); */
+            }
+        })
+    }catch(e){
+        console.log(e.message);
+    }
+    if (status == true){
+        return res.status(200).json(coursesRet);
+    }
+    else{
+        return res.status(404).json({ msg: "couldnt get " });
+        // stop further execution in this callback
+    }
+});
+
+//get list of courses that professor teaches
+router.get('/courses/professor', async (req,res) =>{
+    let coursesRet = [];
+    let status = false;
+    try {
+        await Course.findAll({
+            include: ['users', 'professor'],
+            where: {
+                fk_professor: req.query.id
+            }
+        }).then(courses => {
+            console.log(courses);
+            if (courses === []){
+                status= false;
+            }
+            else{
+                status= true;
+                coursesRet = courses;
             }
         })
     }catch(e){
@@ -244,6 +276,7 @@ router.post('/user/login', async (req,res) =>{
     let role = "";
     let status = false;
     let student_id = 0;
+    let id = 0;
     try {
         await User.findOne({
             where:{
@@ -261,13 +294,14 @@ router.post('/user/login', async (req,res) =>{
                 status= true;
                 role = user.role_name;
                 student_id = user.student_id;
+                id = user.id;
             }
         })
     }catch(e){
         console.log(e.message);
     }
     if (status == true){
-        return res.status(200).json({student_id: student_id, role: role});
+        return res.status(200).json({id: id, student_id: student_id, role: role});
     }
     else{
         console.log("incorrect login info")
