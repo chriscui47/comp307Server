@@ -21,7 +21,7 @@ function isRole(role, offset){
     }
 }
 
-//get list of courses by user
+//get list of courses by that includes users 
 router.get('/courses', async (req,res) =>{
     let coursesRet = [];
     let status = false;
@@ -56,6 +56,7 @@ router.get('/courses', async (req,res) =>{
         // stop further execution in this callback
     }
 });
+
 
 //get list of courses that professor teaches
 router.get('/courses/professor', async (req,res) =>{
@@ -210,27 +211,26 @@ router.get('/course/user/comment', async (req,res) =>{
 
 //get list of courses for user
 router.get('/courses/user/', async (req,res) =>{
-    const student_id = req.query.student_id;
-    console.log(student_id);
+    const id = req.query.id;
     let coursesRet = [];
     let status = false;
     console.log("herew");
     try {
-        await User.findAll({
+        await User.findOne({
             include: 'courses',
             where: {
-                student_id: student_id
+                id: id
             }
-        }).then(courses => {
-            console.log(courses);
-            if (courses === []){
+        }).then(user => {
+            console.log(user);
+            if (user === []){
                 console.log("false");
                 status= false;
             }
             else{
                 console.log("true");
                 status= true;
-                coursesRet = courses[0]["courses"];
+                coursesRet = user["courses"];
             }
         })
     }catch(e){
@@ -249,13 +249,13 @@ router.get('/courses/user/', async (req,res) =>{
 
 //get list
 
-
 //add user to specific course
 router.post('/user/register', (req,res) =>{
-    const course_id = req.body.course_id;
+    const course_ids = req.body.course_ids;
     const user_id = req.body.user_id;
-    console.log(user_id);
-    addCourse(course_id, user_id);
+    let arrayCourse = JSON.parse(course_ids);
+    arrayCourse.forEach(course_id => addCourse(course_id, user_id))
+
     res.status(200).send();
 });
 
