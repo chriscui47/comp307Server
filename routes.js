@@ -253,6 +253,7 @@ router.get('/courses/user/', async (req,res) =>{
 router.post('/user/register', (req,res) =>{
     const course_ids = req.body.course_ids;
     const user_id = req.body.user_id;
+    console.log(course_ids);
     let arrayCourse = JSON.parse(course_ids);
     console.log(arrayCourse);
     arrayCourse.forEach(course_id => addCourse(course_id, user_id))
