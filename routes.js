@@ -254,6 +254,7 @@ router.post('/user/register', (req,res) =>{
     const course_ids = req.body.course_ids;
     const user_id = req.body.user_id;
     let arrayCourse = JSON.parse(course_ids);
+    console.log(arrayCourse);
     arrayCourse.forEach(course_id => addCourse(course_id, user_id))
 
     res.status(200).send();
