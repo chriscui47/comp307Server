@@ -19,7 +19,7 @@ const Comment = sequelize.define("comment", {
   },
   isPerformance: {
     type: Sequelize.BOOLEAN,
-    allowNull: false,
+    allowNull: true,
   },
   
 });

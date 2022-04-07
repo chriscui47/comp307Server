@@ -312,6 +312,46 @@ router.post('/user/login', async (req,res) =>{
     }
 });
 
+//add user by the sysop
+lrouter.post('/user/add', async (req,res) =>{
+    let status = false;
+    try {
+    const bob = await User.create({
+        first_name: req.body.first_name,
+        last_name:  req.body.last_name ,
+        email:  req.body.email,
+        student_id:  req.body.student_id,
+        username:  req.body.username,  
+        password:  req.body.password,
+        role_name:  req.body.role_name
+    }
+        ).then(user => {
+            console.log(user);
+            if (!user){
+                console.log("false");
+                status= false;
+            }
+            else{
+                console.log("true");
+                status= true;
+            }
+        })
+    console.log(JSON.stringify(bob));
+    }catch(e){
+        console.log(e.message);
+    }
+
+    if (status == true){
+        return res.status(200).json({msg: "Registration successfull!"});
+    }
+    else{
+        console.log("incorrect info")
+        return res.status(404).json({ msg: "Incorrect Registration info " });
+        // stop further execution in this callback
+    }
+});
+
+
 //create user
 router.post('/user/create', async (req,res) =>{
     let status = false;
@@ -399,6 +439,7 @@ router.post('/course/create', async (req,res) =>{
 router.post('/comment/create', async (req,res) =>{
     let status = false;
     var commentTemp;
+    console.log(req.body.isPerformance);
     try {
     const bob = await Comment.create({
       comment: req.body.comment,
