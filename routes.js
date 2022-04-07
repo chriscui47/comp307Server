@@ -395,7 +395,7 @@ router.post('/course/create', async (req,res) =>{
       }
 });
 
-//create a comment
+//create a comment or rating
 router.post('/comment/create', async (req,res) =>{
     let status = false;
     var commentTemp;
@@ -403,7 +403,9 @@ router.post('/comment/create', async (req,res) =>{
     const bob = await Comment.create({
       comment: req.body.comment,
       user_id: req.body.user_id,
-      course_id: req.body.course_id
+      course_id: req.body.course_id,
+     isPerformance: req.body.isPerformance,
+     rating: req.body.rating
       }
         ).then(comment => {
             console.log(comment);

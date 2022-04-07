@@ -12,7 +12,16 @@ const Comment = sequelize.define("comment", {
   comment: {
     type: Sequelize.STRING,
     allowNull: true,
-  }
+  },
+  rating: {
+    type: Sequelize.INTEGER,
+    allowNull: true,
+  },
+  isPerformance: {
+    type: Sequelize.BOOLEAN,
+    allowNull: false,
+  },
+  
 });
 
 module.exports =  Comment;
