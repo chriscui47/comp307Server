@@ -422,13 +422,12 @@ router.post('/user/create', async (req,res) =>{
                 status= true;
             }
         })
-    console.log(JSON.stringify(bob));
     }catch(e){
         console.log(e.message);
     }
 
     if (status == true){
-        return res.status(200).json({msg: "Registration successfull!"});
+        return res.status(200).json({id: bob.id});
     }
     else{
         console.log("incorrect info")
