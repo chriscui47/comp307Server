@@ -312,8 +312,53 @@ router.post('/user/login', async (req,res) =>{
     }
 });
 
-//add user by the sysop
-lrouter.post('/user/add', async (req,res) =>{
+
+
+router.post('/user/isitadded', async (req,res) =>{
+    let status = false;
+
+    User.findOne(
+        {
+            where:{
+                username: req.body.username
+            }
+        }
+    ).then(
+        user => {
+           
+        }
+    )
+    console.log(JSON.stringify(bob));
+    if (status == true){
+        return res.status(200).json({msg: "Add successfull!"});
+    }
+    else{
+        console.log("incorrect info")
+        return res.status(404).json({ msg: "Incorrect Add info " });
+        // stop further execution in this callback
+    }
+}
+);
+
+
+/*
+ if (!user){
+                console.log("course not found!");
+                return null;
+            }
+            return User.update(
+                { password: 'a very different title now' },
+                { where: { username: req.body.username } }
+                )
+                .then(result =>{
+                    status = true;
+                }
+                )
+                .catch(err =>
+                  handleError(err)
+                )
+*/
+router.post('/user/add', async (req,res) =>{
     let status = false;
     try {
     const bob = await User.create({
@@ -322,7 +367,7 @@ lrouter.post('/user/add', async (req,res) =>{
         email:  req.body.email,
         student_id:  req.body.student_id,
         username:  req.body.username,  
-        password:  req.body.password,
+        password:  " ",
         role_name:  req.body.role_name
     }
         ).then(user => {
@@ -342,11 +387,11 @@ lrouter.post('/user/add', async (req,res) =>{
     }
 
     if (status == true){
-        return res.status(200).json({msg: "Registration successfull!"});
+        return res.status(200).json({msg: "Add successfull!"});
     }
     else{
         console.log("incorrect info")
-        return res.status(404).json({ msg: "Incorrect Registration info " });
+        return res.status(404).json({ msg: "Incorrect Add info " });
         // stop further execution in this callback
     }
 });
