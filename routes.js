@@ -401,9 +401,8 @@ router.post('/user/add', async (req,res) =>{
 //create user
 router.post('/user/create', async (req,res) =>{
     let status = false;
-    let user = null;
     try {
-        user = await User.create({
+        return User.create({
         first_name: req.body.first_name,
         last_name:  req.body.last_name ,
         email:  req.body.email,
@@ -417,23 +416,15 @@ router.post('/user/create', async (req,res) =>{
             if (!user){
                 console.log("false");
                 status= false;
+                return res.status(404).json({ msg: "Incorrect Registration info " });
             }
             else{
                 console.log("true");
-                status= true;
+                return res.status(200).json({id: user.id});
             }
         })
     }catch(e){
         console.log(e.message);
-    }
-
-    if (status == true){
-        return res.status(200).json({id: user.id});
-    }
-    else{
-        console.log("incorrect info")
-        return res.status(404).json({ msg: "Incorrect Registration info " });
-        // stop further execution in this callback
     }
 });
 
