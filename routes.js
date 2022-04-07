@@ -136,14 +136,35 @@ router.get('/user/role', (req,res) =>{
 });
 
 
-//get list of users for specific course
-router.get('/user/courses/', async (req,res) =>{
+//get list of  ta or user for specific course
+router.get('/user/course/', async (req,res) =>{
     const id = req.query.id;
     let coursesRet = [];
     let status = false;
-    console.log("herew");
-    try {
-        await Course.findAll({
+    const role = req.query.role;
+    // Student, TA, Prof, Administrator, SysOp
+     let offset =0;
+     switch (role.toLowerCase()){
+         case 'student':
+             offset =0;
+             break;
+         case 'ta':
+             offset =1;
+             break;
+         case 'prof':
+             offset =2;
+             break;
+         case 'administrator':
+             offset =3;
+             break;
+         case 'sysop':
+             offset =4;
+             break;
+         default:
+             return res.status(404).json({msg: "invalid role was sent"});
+     }
+         try {
+        return Course.findAll({
             include: 'users',
             where: {
                 id: id
@@ -151,27 +172,18 @@ router.get('/user/courses/', async (req,res) =>{
         }).then(users => {
             console.log(users);
             if (users === []){
-                console.log("false");
-                status= false;
+                return res.status(404).json({ msg: "Incorrect info " });
             }
             else{
-                console.log("true");
-                status= true;
-                coursesRet = users[0]["users"];
+                let tas = users[0]["users"].filter(user => isRole(user.role_name,offset))
+                return res.status(200).json(tas);
             }
         })
     }catch(e){
         console.log(e.message);
     }
-    if (status == true){
-        return res.status(200).json(coursesRet);
-    }
-    else{
-        console.log("incorrect info")
-        return res.status(404).json({ msg: "Incorrect info " });
-        // stop further execution in this callback
-    }
 });
+
 
 
 //get list of comments for specific TA in a course
