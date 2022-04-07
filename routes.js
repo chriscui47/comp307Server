@@ -401,8 +401,9 @@ router.post('/user/add', async (req,res) =>{
 //create user
 router.post('/user/create', async (req,res) =>{
     let status = false;
+    let user = null;
     try {
-    const bob = await User.create({
+        user = await User.create({
         first_name: req.body.first_name,
         last_name:  req.body.last_name ,
         email:  req.body.email,
@@ -427,7 +428,7 @@ router.post('/user/create', async (req,res) =>{
     }
 
     if (status == true){
-        return res.status(200).json({id: bob.id});
+        return res.status(200).json({id: user.id});
     }
     else{
         console.log("incorrect info")
