@@ -315,9 +315,7 @@ router.post('/user/login', async (req,res) =>{
 
 
 router.post('/user/isitadded', async (req,res) =>{
-    let status = false;
-
-    User.findOne(
+    return User.findOne(
         {
             where:{
                 username: req.body.username
@@ -325,39 +323,42 @@ router.post('/user/isitadded', async (req,res) =>{
         }
     ).then(
         user => {
-           
+           if (!user){
+            return res.status(404).json({ msg: "user does not exist " });
+        }
+           else{
+               console.log("found");
+               status = true
+               res.status(200).json(user);
+            }
         }
     )
-    console.log(JSON.stringify(bob));
-    if (status == true){
-        return res.status(200).json({msg: "Add successfull!"});
-    }
-    else{
-        console.log("incorrect info")
-        return res.status(404).json({ msg: "Incorrect Add info " });
-        // stop further execution in this callback
-    }
 }
 );
 
 
-/*
- if (!user){
-                console.log("course not found!");
-                return null;
-            }
-            return User.update(
-                { password: 'a very different title now' },
-                { where: { username: req.body.username } }
-                )
-                .then(result =>{
-                    status = true;
-                }
-                )
-                .catch(err =>
-                  handleError(err)
-                )
-*/
+
+router.put('/user/edit', async (req,res) =>{
+
+
+                return User.update(
+                    { first_name: req.body.first_name,
+                        last_name:  req.body.last_name ,
+                        email:  req.body.email,
+                        student_id:  req.body.student_id,
+                        username:  req.body.username,  
+                        password:  req.body.password,
+                        role_name:  req.body.role_name
+                    },
+                    { where: { username: req.body.username } }
+                    )
+                    .then(result =>{
+                        res.status(200).json(result);
+                    }
+                    )
+    
+                });
+
 router.post('/user/add', async (req,res) =>{
     let status = false;
     try {
