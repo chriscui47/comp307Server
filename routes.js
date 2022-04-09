@@ -573,6 +573,7 @@ router.post('/comment/create', async (req,res) =>{
 });
 //delete a user
 router.delete('/user/delete', async (req, res, next) => {
+    console.log("here");
     let user = await User.findOne({where: {id: req.body.id}}).catch(e => {
        console.log(e.message)
     })
