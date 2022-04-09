@@ -142,42 +142,30 @@ router.get('/user/course/', async (req,res) =>{
     const id = req.query.id;
     let coursesRet = [];
     let status = false;
-    const role = req.query.role;
-    // Student, TA, Prof, Administrator, SysOp
-     let offset =0;
-     switch (role.toLowerCase()){
-         case 'student':
-             offset =0;
-             break;
-         case 'ta':
-             offset =1;
-             break;
-         case 'prof':
-             offset =2;
-             break;
-         case 'administrator':
-             offset =3;
-             break;
-         case 'sysop':
-             offset =4;
-             break;
-         default:
-             return res.status(404).json({msg: "invalid role was sent"});
-     }
          try {
-        return Course.findAll({
+        return Course.findOne({
             include: 'users',
             where: {
                 id: id
             }
-        }).then(users => {
-            console.log(users);
-            if (users.length ==0){
+        }).then(async course => {
+            if (course.length ==0){
                 return res.status(404).json({ msg: "Incorrect info " });
             }
             else{
-                let tas = users[0]["users"].filter(user => isRole(user.role_name,offset))
-                return res.status(200).json(tas);
+
+                const retArray = [];
+                let arrayUsers = JSON.parse(JSON.stringify(course.users));
+                for await (const user of arrayUsers){
+                    const reg = await Registration.findOne({where: {user_id: user.id, course_id: req.query.id}});
+                    console.log(req.query.isStudent);
+                    if (reg.isStudent.toString() == req.query.isStudent.toString()){
+                        console.log("here")
+                        retArray.push(user);
+                    }
+                    console.log("done if statement");
+                }
+                return res.status(200).json({users: retArray});
             }
         })
     }catch(e){
@@ -272,9 +260,9 @@ router.post('/user/register', (req,res) =>{
         Registration.create({
             user_id: req.body.user_id,
             course_id:  course_id,
+            isStudent: req.body.isStudent,
             hours:  req.body.hours,
         }).then( user => console.log(user)
-        
         );
     }
     )

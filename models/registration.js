@@ -9,6 +9,10 @@ const Registration = sequelize.define("registration", {
     allowNull: false,
     primaryKey: true,
   },
+  isStudent: {
+    type: Sequelize.BOOLEAN,
+    allowNull: true,
+  },
   hours:{
     type: Sequelize.INTEGER,
     allowNull: true,
