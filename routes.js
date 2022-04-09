@@ -463,10 +463,10 @@ router.post('/user/create', async (req,res) =>{
 //create courses from csv
 router.post('/course/create/csv', async (req,res) =>{
     let status = false;
-    let arrayCourse = JSON.parse(req.body.courses);
-    console.log(JSON.stringify(arrayCourse));
+    let arrayCourse = JSON.parse(JSON.stringify(req.body.courses));
     arrayCourse.forEach( json => {
-        const profName = json[instructor_assigned_name];
+        const profName = json.instructor_assigned_name;
+        console.log(profName)
         return User.findOne({where: {username: profName}}).then(
             user => {
                 Course.create({
@@ -486,7 +486,9 @@ router.post('/course/create/csv', async (req,res) =>{
                           }
                       })
             }
-        )
+        ).catch(e => {
+            return res.status(404).json({msg: "error"})}
+        );
     })
 });
 //create a course
