@@ -266,9 +266,7 @@ router.get('/courses/user/', async (req,res) =>{
 router.post('/user/register', (req,res) =>{
     const course_ids = req.body.course_ids;
     const user_id = req.body.user_id;
-    console.log(course_ids);
     let arrayCourse = JSON.parse(course_ids);
-    console.log(arrayCourse);
         
     arrayCourse.forEach(course_id => {
         Registration.create({
@@ -290,8 +288,18 @@ router.post('/user/unregister', (req,res) =>{
     const course_id = req.body.course_id;
     const user_id = req.body.user_id;
     console.log(user_id);
-    removeCourseFromUser(course_id, user_id);
-    res.status(200).send();
+
+    Registration.findOne({where: {user_id: req.body.user_id, course_id: req.body.course_id}}).then(
+        registration => {
+            if (! registration){
+                return res.status(404).json("User not found");
+            }
+            else{
+                registration.destroy();
+                return res.status(200).json("User deleted successfully");
+            }
+        }
+    )
 });
 
 
