@@ -470,11 +470,11 @@ router.post('/course/create/csv', async (req,res) =>{
         return User.findOne({where: {username: profName}}).then(
             user => {
                 Course.create({
-                    term_month_year: req.body.term_month_year
+                    term_month_year: json.term_month_year
                     ,
-                    course_num:req.body.course_num
+                    course_num: json.course_num
                     ,
-                    course_name: req.body.course_name,
+                    course_name: json.course_name,
                     fk_professor: user.id
                     }
                       ).then(course => {
