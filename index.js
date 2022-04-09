@@ -47,18 +47,18 @@ app.use((req, res, next) => {
 process.on('uncaughtException', function (error) {
   console.log(error.stack);
 });
-
+const Registration = require("./models/registration");
 const User = require("./models/user");
 const Course = require("./models/course");
 const Comment = require("./models/comment");
 Course.belongsToMany(User, {
-    through: "user_course",
+    through: "registration",
     as: "users",
     foreignKey: "course_id",
   });
 
   User.belongsToMany(Course, {
-    through: "user_course",
+    through: "registration",
     as: "courses",
     foreignKey: "user_id",
   });

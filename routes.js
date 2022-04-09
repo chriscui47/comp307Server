@@ -5,6 +5,7 @@ const User = require("./models/user");
 const Course = require("./models/course");
 const Comment = require("./models/comment");
 const {addCourse, removeCourseFromUser} = require('./courseService.js');
+const Registration = require('./models/registration.js');
 // Student, TA, Prof, Administrator, SysOp
 
 
@@ -171,7 +172,7 @@ router.get('/user/course/', async (req,res) =>{
             }
         }).then(users => {
             console.log(users);
-            if (users === []){
+            if (users.length ==0){
                 return res.status(404).json({ msg: "Incorrect info " });
             }
             else{
@@ -268,7 +269,19 @@ router.post('/user/register', (req,res) =>{
     console.log(course_ids);
     let arrayCourse = JSON.parse(course_ids);
     console.log(arrayCourse);
-    arrayCourse.forEach(course_id => addCourse(course_id, user_id))
+        
+    arrayCourse.forEach(course_id => {
+        Registration.create({
+            user_id: req.body.user_id,
+            course_id:  course_id,
+            hours: 22
+        }).then( user => console.log(user)
+        
+        );
+    }
+    )
+
+ //   arrayCourse.forEach(course_id => addCourse(course_id, user_id))
 
     res.status(200).send();
 });
