@@ -274,7 +274,7 @@ router.post('/user/register', (req,res) =>{
         Registration.create({
             user_id: req.body.user_id,
             course_id:  course_id,
-            hours: 22
+            hours:  req.body.hours,
         }).then( user => console.log(user)
         
         );
@@ -286,7 +286,6 @@ router.post('/user/register', (req,res) =>{
     res.status(200).send();
 });
 
-//add user to specific course
 router.post('/user/unregister', (req,res) =>{
     const course_id = req.body.course_id;
     const user_id = req.body.user_id;
