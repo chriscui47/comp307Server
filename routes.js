@@ -165,7 +165,7 @@ router.get('/user/course/', async (req,res) =>{
                     }
                     console.log("done if statement");
                 }
-                return res.status(200).json({users: retArray});
+                return res.status(200).json(retArray);
             }
         })
     }catch(e){
