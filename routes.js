@@ -370,7 +370,7 @@ router.put('/user/edit', async (req,res) =>{
                         password:  req.body.password,
                         role_name:  req.body.role_name
                     },
-                    { where: { username: req.body.username } }
+                    { where: { id: req.body.id } }
                     )
                     .then(result =>{
                         res.status(200).json(result);
