@@ -270,9 +270,10 @@ router.post('/user/register', (req,res) =>{
             course_id:  course_id,
             isStudent: req.body.isStudent,
             hours:  req.body.hours,
-        }).then( user => console.log(user).catch(e => {
+        }).then( user => console.log(user))
+        .catch(e => {
             return res.status(404).json({msg: "error"})}
-        )
+
         );
     }
     )
