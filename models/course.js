@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 
 const sequelize = require("../dbconfig.js");
+//define the entity for course
 
 const Course = sequelize.define("course", {
   id: {

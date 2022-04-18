@@ -51,6 +51,11 @@ const Registration = require("./models/registration");
 const User = require("./models/user");
 const Course = require("./models/course");
 const Comment = require("./models/comment");
+
+
+//define the one to many mapppings
+//also define the many to many
+
 Course.belongsToMany(User, {
     through: "registration",
     as: "users",

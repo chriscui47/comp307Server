@@ -1,6 +1,8 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../dbconfig.js");
 
+//define the entity for user
+
 const User = sequelize.define("user", {
   id: {
     type: Sequelize.INTEGER,

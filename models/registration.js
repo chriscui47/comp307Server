@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 
 const sequelize = require("../dbconfig.js");
+//define the entity for registration
 
 const Registration = sequelize.define("registration", {
   id: {

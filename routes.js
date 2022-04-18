@@ -8,7 +8,7 @@ const {addCourse, removeCourseFromUser} = require('./courseService.js');
 const Registration = require('./models/registration.js');
 // Student, TA, Prof, Administrator, SysOp
 
-
+//function to determine, given a binary 0 0 0 0 role string, whether the role has a 1 bit at the desired lcoation
 function isRole(role, offset){    
     let roleString = role.split(' ').join('') 
     // Student, TA, Prof, Administrator, SysOp
@@ -28,6 +28,7 @@ router.get('/courses', async (req,res) =>{
     let status = false;
     console.log("herew");
     try {
+        //find all courses request
         await Course.findAll({
             include: ['users', 'professor']
         }).then(courses => {
@@ -38,12 +39,6 @@ router.get('/courses', async (req,res) =>{
             else{
                 status= true;
                 coursesRet = courses;
-                /*
-                coursesRet.forEach((element, index) => {
-                    console.log(index);
-                    const result = element.users.filter( user => isRole(user.role_name, 1));
-                    coursesRet[index].users = ["dsfffffff"];
-                }); */
             }
         })
     }catch(e){
@@ -64,6 +59,7 @@ router.get('/courses/professor', async (req,res) =>{
     let coursesRet = [];
     let status = false;
     try {
+        //find all courses, join the user table and professor table by foregin keys.
         await Course.findAll({
             include: ['users', 'professor'],
             where: {
@@ -98,6 +94,8 @@ router.get('/user', (req,res) =>{
         {
             res.status(200).json(users);
         }
+    ).catch(e => {
+        return res.status(404).json({msg: "error"})}
     );
 
 });
@@ -127,13 +125,17 @@ router.get('/user/role', (req,res) =>{
             return res.status(404).json({msg: "invalid role was sent"});
     }
     console.log(offset);
+    //find all useres query
     return User.findAll(
     ).then( users => 
         {
+            //filter users by TA
             let tas = users.filter(user => isRole(user.role_name,offset))
             res.status(200).json(tas);
         }
-    );
+    ).catch(e => {
+        return res.status(404).json({msg: "error"})}
+    )
 });
 
 
@@ -143,6 +145,7 @@ router.get('/user/course/', async (req,res) =>{
     let coursesRet = [];
     let status = false;
          try {
+             //query by user iod
         return Course.findOne({
             include: 'users',
             where: {
@@ -155,8 +158,10 @@ router.get('/user/course/', async (req,res) =>{
             else{
 
                 const retArray = [];
+                //parse the users as an array
                 let arrayUsers = JSON.parse(JSON.stringify(course.users));
                 for await (const user of arrayUsers){
+                    //find registration for each user
                     const reg = await Registration.findOne({where: {user_id: user.id, course_id: req.query.id}});
                     console.log(req.query.isStudent);
                     if (reg.isStudent.toString() == req.query.isStudent.toString()){
@@ -181,6 +186,7 @@ router.get('/course/user/comment', async (req,res) =>{
     let status = false;
     console.log("herew");
     try {
+        //find comment queery, using ocurse and user id 
         await Comment.findAll({
             where: {
                 course_id: req.query.course_id,
@@ -215,8 +221,8 @@ router.get('/courses/user/', async (req,res) =>{
     const id = req.query.id;
     let coursesRet = [];
     let status = false;
-    console.log("herew");
     try {
+        //query user by id, join courses table
         await User.findOne({
             include: 'courses',
             where: {
@@ -254,15 +260,19 @@ router.get('/courses/user/', async (req,res) =>{
 router.post('/user/register', (req,res) =>{
     const course_ids = req.body.course_ids;
     const user_id = req.body.user_id;
+    //parse json body as array
     let arrayCourse = JSON.parse(course_ids);
         
     arrayCourse.forEach(course_id => {
+        //create registration entity
         Registration.create({
             user_id: req.body.user_id,
             course_id:  course_id,
             isStudent: req.body.isStudent,
             hours:  req.body.hours,
-        }).then( user => console.log(user)
+        }).then( user => console.log(user).catch(e => {
+            return res.status(404).json({msg: "error"})}
+        )
         );
     }
     )
@@ -271,12 +281,11 @@ router.post('/user/register', (req,res) =>{
 
     res.status(200).send();
 });
-
+//unregister a user
 router.post('/user/unregister', (req,res) =>{
     const course_id = req.body.course_id;
     const user_id = req.body.user_id;
-    console.log(user_id);
-
+    //find a registration, and delete it to unregister the user
     Registration.findOne({where: {user_id: req.body.user_id, course_id: req.body.course_id}}).then(
         registration => {
             if (! registration){
@@ -287,6 +296,8 @@ router.post('/user/unregister', (req,res) =>{
                 return res.status(200).json("User deleted successfully");
             }
         }
+    ).catch(e => {
+        return res.status(404).json({msg: "error"})}
     )
 });
 
@@ -300,6 +311,7 @@ router.post('/user/login', async (req,res) =>{
     let student_id = 0;
     let id = 0;
     try {
+        //try to find the user by info, then allow them to login if found
         await User.findOne({
             where:{
                 username: username,
@@ -352,6 +364,8 @@ router.post('/user/isitadded', async (req,res) =>{
                res.status(200).json(user);
             }
         }
+    ).catch(e => {
+        return res.status(404).json({msg: "error"})}
     )
 }
 );
@@ -359,8 +373,7 @@ router.post('/user/isitadded', async (req,res) =>{
 
 
 router.put('/user/edit', async (req,res) =>{
-
-
+    //find the user entity and update the fields
                 return User.update(
                     { first_name: req.body.first_name,
                         last_name:  req.body.last_name ,
@@ -382,6 +395,7 @@ router.put('/user/edit', async (req,res) =>{
 router.post('/user/add', async (req,res) =>{
     let status = false;
     try {
+        //add user 
     const bob = await User.create({
         first_name: req.body.first_name,
         last_name:  req.body.last_name ,
@@ -402,7 +416,6 @@ router.post('/user/add', async (req,res) =>{
                 status= true;
             }
         })
-    console.log(JSON.stringify(bob));
     }catch(e){
         console.log(e.message);
     }
@@ -411,7 +424,6 @@ router.post('/user/add', async (req,res) =>{
         return res.status(200).json({msg: "Add successfull!"});
     }
     else{
-        console.log("incorrect info")
         return res.status(404).json({ msg: "Incorrect Add info " });
         // stop further execution in this callback
     }
@@ -455,6 +467,7 @@ router.post('/course/create/csv', async (req,res) =>{
     arrayCourse.forEach( json => {
         const profName = json.instructor_assigned_name;
         console.log(profName)
+        //find professor, create the course using the prof's name
         return User.findOne({where: {username: profName}}).then(
             user => {
                 Course.create({
@@ -483,7 +496,6 @@ router.post('/course/create/csv', async (req,res) =>{
 router.post('/course/create', async (req,res) =>{
       let status = false;
       let fk_professor = req.body.fk_professor;
-      console.log(req.body.fk_professor);
       var courseTemp;
       try {
       const bob = await Course.create({
@@ -508,7 +520,9 @@ router.post('/course/create', async (req,res) =>{
           .then(prof => {
             courseTemp.setProfessor(prof);
             status = true;
-          })
+          }).catch(e => {
+            return res.status(404).json({msg: "error"})}
+        )
       }catch(e){
           console.log(e.message);
       }
